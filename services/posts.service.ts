@@ -21,12 +21,14 @@ export async function getPosts(sort?: string, order?: string): Promise<Post[]> {
     url.searchParams.append("_order", order);
   }
   // Use no-store to disable caching for dynamic filtering
-  return fetchAPI<Post[]>(url.toString(), { cache: "no-store" });
+  return fetchAPI<Post[]>(url.toString(), { next: { revalidate: 60 } });
 }
 
 /**
  * Get a single post by ID
  */
 export async function getPostById(id: number): Promise<Post> {
-  return fetchAPI<Post>(`${BASE_URL}/posts/${id}`);
+  return fetchAPI<Post>(`${BASE_URL}/posts/${id}`, {
+    next: { revalidate: 60 },
+  });
 }

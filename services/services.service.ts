@@ -199,7 +199,7 @@ export interface ServiceResponseWithPagination {
 export async function getAllServices(): Promise<Service[]> {
   try {
     const response = await fetchAPI<ServiceResponse>(`${BASE_URL}/services`, {
-      // next: { revalidate: 60 },
+      next: { revalidate: 60 },
     });
 
     return response.data.map(flattenService);

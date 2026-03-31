@@ -24,8 +24,7 @@ interface FetchOptions extends RequestInit {
  * Modify this to change default behavior across all services
  */
 export const DEFAULT_CACHE_CONFIG: RequestInit = {
-  cache: "force-cache" as RequestCache,
-  next: { revalidate: 10 },
+  next: { revalidate: 60 },
 };
 
 /**
@@ -44,15 +43,15 @@ export async function fetchAPI<T>(
   url: string,
   options: RequestInit = DEFAULT_CACHE_CONFIG,
 ): Promise<T> {
-  const cookieStore = await cookies();
-  const lang = cookieStore.get("lang")?.value || "en";
+  // const cookieStore = await cookies();
+  // const lang = cookieStore.get("lang")?.value || "en";
 
-  const urlWithLang = new URL(url);
-  urlWithLang.searchParams.set("locale", lang);
+  // const urlWithLang = new URL(url);
+  // urlWithLang.searchParams.set("locale", lang);
 
-  console.log(urlWithLang.toString());
+  // console.log(urlWithLang.toString());
 
-  const res = await fetch(urlWithLang.toString(), options);
+  const res = await fetch(url, options);
 
   // console.log(urlWithLang);
 
@@ -71,19 +70,19 @@ export async function apiRequest<T>(
   url: string,
   options: FetchOptions = {},
 ): Promise<T> {
-  const cookieStore = await cookies();
-  const lang = cookieStore.get("lang")?.value || "en";
+  // const cookieStore = await cookies();
+  // const lang = cookieStore.get("lang")?.value || "en";
 
-  const urlWithLang = new URL(url);
-  urlWithLang.searchParams.set("local", lang);
+  // const urlWithLang = new URL(url);
+  // urlWithLang.searchParams.set("local", lang);
 
-  const headers = new Headers(options.headers);
-  headers.set("Accept-Language", lang);
-  headers.set("Content-Type", "application/json");
+  // const headers = new Headers(options.headers);
+  // headers.set("Accept-Language", lang);
+  // headers.set("Content-Type", "application/json");
 
-  const res = await fetch(urlWithLang.toString(), {
+  const res = await fetch(url, {
     ...options,
-    headers,
+    // headers,
   });
 
   if (!res.ok) {

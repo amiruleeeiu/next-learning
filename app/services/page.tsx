@@ -1,6 +1,8 @@
 import { Suspense } from "react";
 import { ServicesList, ServicesListSkeleton } from "../components/ServicesList";
 
+export const revalidate = 60;
+
 export default async function ServicesPage() {
   return (
     <div className="flex flex-col flex-1 items-center bg-zinc-50 font-sans dark:bg-black py-10 px-4">
