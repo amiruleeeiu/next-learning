@@ -1,65 +1,102 @@
-import Image from "next/image";
+import { Suspense } from "react";
+import { PostsList, PostsListSkeleton } from "./components/PostsList";
+import SortProducts from "./components/SortProducts";
 
-export default function Home() {
+// Force dynamic rendering for searchParams
+export const dynamic = "force-dynamic";
+
+export default async function Home(props: {
+  searchParams: Promise<{ sort?: string; order?: string }>;
+}) {
+  const searchParams = await props.searchParams;
+  console.log("🔍 Page searchParams:", searchParams);
   return (
-    <div className="flex flex-col flex-1 items-center justify-center bg-zinc-50 font-sans dark:bg-black">
-      <main className="flex flex-1 w-full max-w-3xl flex-col items-center justify-between py-32 px-16 bg-white dark:bg-black sm:items-start">
-        <Image
-          className="dark:invert"
-          src="/next.svg"
-          alt="Next.js logo"
-          width={100}
-          height={20}
-          priority
-        />
-        <div className="flex flex-col items-center gap-6 text-center sm:items-start sm:text-left">
-          <h1 className="max-w-xs text-3xl font-semibold leading-10 tracking-tight text-black dark:text-zinc-50">
-            To get started, edit the page.tsx file.
-          </h1>
-          <p className="max-w-md text-lg leading-8 text-zinc-600 dark:text-zinc-400">
-            Looking for a starting point or more instructions? Head over to{" "}
-            <a
-              href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              className="font-medium text-zinc-950 dark:text-zinc-50"
-            >
-              Templates
-            </a>{" "}
-            or the{" "}
-            <a
-              href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              className="font-medium text-zinc-950 dark:text-zinc-50"
-            >
-              Learning
-            </a>{" "}
-            center.
-          </p>
+    <div className="flex flex-col flex-1 items-center bg-zinc-50 font-sans dark:bg-black py-10 px-4">
+      {/* Static Content - Instantly loads */}
+      <header className="w-full max-w-4xl mb-8">
+        <h1 className="text-4xl font-bold mb-4 text-gray-800 dark:text-white text-center">
+          Welcome to Next.js Blog
+        </h1>
+        <p className="text-lg text-gray-600 dark:text-gray-400 text-center">
+          Discover amazing articles and insights from our community
+        </p>
+        <div className="mt-6 flex justify-center gap-4">
+          <div className="bg-blue-100 dark:bg-blue-900/30 px-6 py-3 rounded-lg">
+            <div className="text-2xl font-bold text-blue-600 dark:text-blue-400">
+              100+
+            </div>
+            <div className="text-sm text-gray-600 dark:text-gray-400">
+              Articles
+            </div>
+          </div>
+          <div className="bg-green-100 dark:bg-green-900/30 px-6 py-3 rounded-lg">
+            <div className="text-2xl font-bold text-green-600 dark:text-green-400">
+              50K+
+            </div>
+            <div className="text-sm text-gray-600 dark:text-gray-400">
+              Readers
+            </div>
+          </div>
+          <div className="bg-purple-100 dark:bg-purple-900/30 px-6 py-3 rounded-lg">
+            <div className="text-2xl font-bold text-purple-600 dark:text-purple-400">
+              24/7
+            </div>
+            <div className="text-sm text-gray-600 dark:text-gray-400">
+              Updated
+            </div>
+          </div>
         </div>
-        <div className="flex flex-col gap-4 text-base font-medium sm:flex-row">
-          <a
-            className="flex h-12 w-full items-center justify-center gap-2 rounded-full bg-foreground px-5 text-background transition-colors hover:bg-[#383838] dark:hover:bg-[#ccc] md:w-[158px]"
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <Image
-              className="dark:invert"
-              src="/vercel.svg"
-              alt="Vercel logomark"
-              width={16}
-              height={16}
-            />
-            Deploy Now
-          </a>
-          <a
-            className="flex h-12 w-full items-center justify-center rounded-full border border-solid border-black/[.08] px-5 transition-colors hover:border-transparent hover:bg-black/[.04] dark:border-white/[.145] dark:hover:bg-[#1a1a1a] md:w-[158px]"
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Documentation
-          </a>
+      </header>
+
+      {/* Dynamic Content - Streams with Suspense */}
+      <section className="w-full max-w-4xl mb-8">
+        <h2 className="text-2xl font-bold mb-6 text-gray-800 dark:text-white">
+          Latest Posts
+        </h2>
+        <SortProducts />
+        <Suspense
+          key={`${searchParams.sort}-${searchParams.order}`}
+          fallback={<PostsListSkeleton />}
+        >
+          <PostsList searchParams={searchParams} />
+        </Suspense>
+      </section>
+
+      {/* Static Content - Instantly loads */}
+      <footer className="w-full max-w-4xl mt-12 pt-8 border-t border-gray-200 dark:border-gray-700">
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
+          <div>
+            <h3 className="font-semibold text-gray-800 dark:text-white mb-3">
+              About Us
+            </h3>
+            <p className="text-sm text-gray-600 dark:text-gray-400">
+              We share knowledge and insights to help developers grow and build
+              amazing things.
+            </p>
+          </div>
+          <div>
+            <h3 className="font-semibold text-gray-800 dark:text-white mb-3">
+              Quick Links
+            </h3>
+            <ul className="text-sm text-gray-600 dark:text-gray-400 space-y-2">
+              <li>• Home</li>
+              <li>• Dashboard</li>
+              <li>• Client Demo</li>
+            </ul>
+          </div>
+          <div>
+            <h3 className="font-semibold text-gray-800 dark:text-white mb-3">
+              Follow Us
+            </h3>
+            <p className="text-sm text-gray-600 dark:text-gray-400">
+              Stay updated with our latest posts and updates.
+            </p>
+          </div>
         </div>
-      </main>
+        <div className="text-center text-sm text-gray-500 dark:text-gray-500">
+          © 2026 Next.js Blog. All rights reserved.
+        </div>
+      </footer>
     </div>
   );
 }
