@@ -44,7 +44,17 @@ export async function fetchAPI<T>(
   url: string,
   options: RequestInit = DEFAULT_CACHE_CONFIG,
 ): Promise<T> {
-  const res = await fetch(url, options);
+  const cookieStore = await cookies();
+  const lang = cookieStore.get("lang")?.value || "en";
+
+  const urlWithLang = new URL(url);
+  urlWithLang.searchParams.set("locale", lang);
+
+  console.log(urlWithLang.toString());
+
+  const res = await fetch(urlWithLang.toString(), options);
+
+  // console.log(urlWithLang);
 
   if (!res.ok) {
     throw new Error(`Failed to fetch ${url}: ${res.status} ${res.statusText}`);
@@ -65,7 +75,7 @@ export async function apiRequest<T>(
   const lang = cookieStore.get("lang")?.value || "en";
 
   const urlWithLang = new URL(url);
-  urlWithLang.searchParams.set("lang", lang);
+  urlWithLang.searchParams.set("local", lang);
 
   const headers = new Headers(options.headers);
   headers.set("Accept-Language", lang);
