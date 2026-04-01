@@ -1,17 +1,18 @@
 "use client";
 
+import { CheckboxField } from "@/components/forms/CheckboxField";
+import { ComboboxField } from "@/components/forms/ComboboxField";
+import { FormField } from "@/components/forms/FormField";
+import { RadioGroupField } from "@/components/forms/RadioGroupField";
+import { SelectField } from "@/components/forms/SelectField";
+import { SwitchField } from "@/components/forms/SwitchField";
+import { TextareaField } from "@/components/forms/TextareaField";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { FieldGroup } from "@/components/ui/field";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { FormProvider, useForm } from "react-hook-form";
 import { z } from "zod";
-import { CheckboxField } from "./CheckboxField";
-import { FormField } from "./FormField";
-import { RadioGroupField } from "./RadioGroupField";
-import { SelectField } from "./SelectField";
-import { SwitchField } from "./SwitchField";
-import { TextareaField } from "./TextareaField";
 
 const schema = z.object({
   name: z.string().min(2, "Name required"),
@@ -19,6 +20,7 @@ const schema = z.object({
   bio: z.string().min(10, "Bio must be at least 10 characters"),
   role: z.string().min(1, "Please select a role"),
   gender: z.string().min(1, "Please select a gender"),
+  country: z.string().min(1, "Please select a country").nullable(),
   newsletter: z.boolean(),
   terms: z.boolean().refine((v) => v === true, "You must accept the terms"),
 });
@@ -34,6 +36,7 @@ export function RegisterForm() {
       bio: "",
       role: "",
       gender: "",
+      country: "",
       newsletter: false,
       terms: false,
     },
@@ -87,6 +90,25 @@ export function RegisterForm() {
                   { label: "Male", value: "male" },
                   { label: "Female", value: "female" },
                   { label: "Other", value: "other" },
+                ]}
+              />
+
+              {/* Combobox — Controller (base-ui) */}
+              <ComboboxField
+                name="country"
+                label="Country"
+                placeholder="Search country…"
+                options={[
+                  { label: "Malaysia", value: "my" },
+                  { label: "United States", value: "us" },
+                  { label: "United Kingdom", value: "gb" },
+                  { label: "Singapore", value: "sg" },
+                  { label: "Australia", value: "au" },
+                  { label: "Canada", value: "ca" },
+                  { label: "Germany", value: "de" },
+                  { label: "France", value: "fr" },
+                  { label: "Japan", value: "jp" },
+                  { label: "India", value: "in" },
                 ]}
               />
 
