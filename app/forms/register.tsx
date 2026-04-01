@@ -1,76 +1,108 @@
 "use client";
 
 import { Button } from "@/components/ui/button";
-import {
-  Field,
-  FieldDescription,
-  FieldGroup,
-  FieldLabel,
-} from "@/components/ui/field";
-import { Input } from "@/components/ui/input";
+import { Card } from "@/components/ui/card";
+import { FieldGroup } from "@/components/ui/field";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { Controller, useForm } from "react-hook-form";
+import { FormProvider, useForm } from "react-hook-form";
 import { z } from "zod";
+import { CheckboxField } from "./CheckboxField";
+import { FormField } from "./FormField";
+import { RadioGroupField } from "./RadioGroupField";
+import { SelectField } from "./SelectField";
+import { SwitchField } from "./SwitchField";
+import { TextareaField } from "./TextareaField";
 
 const schema = z.object({
   name: z.string().min(2, "Name required"),
   email: z.string().email("Invalid email"),
+  bio: z.string().min(10, "Bio must be at least 10 characters"),
+  role: z.string().min(1, "Please select a role"),
+  gender: z.string().min(1, "Please select a gender"),
+  newsletter: z.boolean(),
+  terms: z.boolean().refine((v) => v === true, "You must accept the terms"),
 });
 
 type FormValues = z.infer<typeof schema>;
 
 export function RegisterForm() {
-  const { control, handleSubmit } = useForm<FormValues>({
+  const methods = useForm<FormValues>({
     resolver: zodResolver(schema),
-    defaultValues: { name: "", email: "" },
+    defaultValues: {
+      name: "",
+      email: "",
+      bio: "",
+      role: "",
+      gender: "",
+      newsletter: false,
+      terms: false,
+    },
   });
 
   const onSubmit = (data: FormValues) => console.log(data);
 
   return (
-    <div className="w-full flex items-center">
-      <form
-        onSubmit={handleSubmit(onSubmit)}
-        className="space-y-4 m-12 w-[500px] border rounded-lg p-6 bg-white shadow-md"
-      >
-        <FieldGroup>
-          <Controller
-            name="name"
-            control={control}
-            render={({ field, fieldState }) => (
-              <Field>
-                <FieldLabel htmlFor="name">Name</FieldLabel>
-                <Input id="name" {...field} placeholder="Name" />
-                {fieldState.error && (
-                  <FieldDescription className="text-destructive">
-                    {fieldState.error.message}
-                  </FieldDescription>
-                )}
-              </Field>
-            )}
-          />
+    <div className="w-full flex items-center m-12">
+      <Card className="w-125 p-5">
+        <FormProvider {...methods}>
+          <form
+            onSubmit={methods.handleSubmit(onSubmit)}
+            // className="space-y-4 m-12 w-125 border rounded-lg p-6 bg-white shadow-md"
+          >
+            <FieldGroup>
+              {/* Text input — register */}
+              <FormField name="name" label="Name" placeholder="Your name" />
 
-          <Controller
-            name="email"
-            control={control}
-            render={({ field, fieldState }) => (
-              <Field>
-                <FieldLabel htmlFor="email">Email</FieldLabel>
-                <Input id="email" {...field} placeholder="Email" />
-                {fieldState.error && (
-                  <FieldDescription className="text-destructive">
-                    {fieldState.error.message}
-                  </FieldDescription>
-                )}
-              </Field>
-            )}
-          />
+              {/* Email input — register */}
+              <FormField
+                name="email"
+                label="Email"
+                placeholder="you@example.com"
+              />
 
-          <Button type="submit" size={"lg"}>
-            Submit
-          </Button>
-        </FieldGroup>
-      </form>
+              {/* Textarea — register */}
+              <TextareaField
+                name="bio"
+                label="Bio"
+                placeholder="Tell us about yourself…"
+              />
+
+              {/* Select — Controller (Radix) */}
+              <SelectField
+                name="role"
+                label="Role"
+                placeholder="Select a role"
+                options={[
+                  { label: "Admin", value: "admin" },
+                  { label: "User", value: "user" },
+                  { label: "Guest", value: "guest" },
+                ]}
+              />
+
+              {/* Radio group — Controller (Radix) */}
+              <RadioGroupField
+                name="gender"
+                label="Gender"
+                options={[
+                  { label: "Male", value: "male" },
+                  { label: "Female", value: "female" },
+                  { label: "Other", value: "other" },
+                ]}
+              />
+
+              {/* Switch — Controller (Radix) */}
+              <SwitchField name="newsletter" label="Subscribe to newsletter" />
+
+              {/* Checkbox — Controller (Radix) */}
+              <CheckboxField name="terms" label="Accept terms and conditions" />
+
+              <Button type="submit" size={"lg"}>
+                Submit
+              </Button>
+            </FieldGroup>
+          </form>
+        </FormProvider>
+      </Card>
     </div>
   );
 }
